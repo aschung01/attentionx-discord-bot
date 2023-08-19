@@ -58,9 +58,15 @@ scope = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive",
 ]
+# Fetch the service account key
+service_account_key = os.environ.get("GOOGLE_SERVICE_ACCOUNT_KEY")
 
-creds = ServiceAccountCredentials.from_json(
-    json.loads(os.environ.get("GOOGLE_SERVICE_ACCOUNT_KEY")), scope
+# Check if the environment variable is set
+if not service_account_key:
+    raise ValueError("Environment variable 'GOOGLE_SERVICE_ACCOUNT_KEY' is not set!")
+
+creds = ServiceAccountCredentials.from_json_keyfile_dict(
+    json.loads(service_account_key), scope
 )
 spreadsheet_client = gspread.authorize(creds)
 sheet = spreadsheet_client.open_by_key(SPREADSHEET_ID).sheet1
